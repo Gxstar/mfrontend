@@ -7,7 +7,11 @@
         <v-app-bar-title>摄影数据库</v-app-bar-title>
 
         <template v-slot:append>
-            <v-btn>
+            <!-- 添加主页按钮 -->
+            <v-btn icon @click="goHome">
+                <v-icon>mdi-home</v-icon>
+            </v-btn>
+            <v-btn @click="handleAuthClick">
                 <v-icon v-if="!isLoggedIn">mdi-login</v-icon>
                 <v-icon v-else>mdi-logout</v-icon>
                 <div v-if="!isLoggedIn">登录</div>
@@ -36,6 +40,19 @@
                 </v-avatar>
                 <span class="text-body-2">镜头</span>
             </v-list-item>
+            <v-list-group value="brands">
+                <template v-slot:activator="{ props }">
+                    <v-list-item v-bind="props" color="primary">
+                        <v-avatar size="small">
+                            <v-icon color="primary">mdi-collapse-all</v-icon>
+                        </v-avatar>
+                        <span class="text-body-2">品牌</span>
+                    </v-list-item>
+                </template>
+                <v-list-item v-for="brand in brands" :key="brand.id" @click="navigateToBrand(brand.id)">
+                    <v-list-item-title>{{ brand.cname }}</v-list-item-title>
+                </v-list-item>
+            </v-list-group>
             <v-list-item to="/about" link class="d-flex justify-start align-center">
                 <v-avatar size="small">
                     <v-icon color="primary">mdi-information</v-icon>
@@ -47,10 +64,48 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
 
+const router = useRouter()
 const drawer = ref(false)
 const isLoggedIn = ref(false)
+const brands = ref([])
+// 添加返回主页方法
+const goHome = () => {
+  router.push('/')
+}
+const handleAuthClick = () => {
+    if (isLoggedIn.value) {
+        // 登出逻辑
+        isLoggedIn.value = false
+    } else {
+        // 跳转到登录页面
+        router.push('/login')
+    }
+}
+
+// 获取品牌数据
+const fetchBrands = async () => {
+    try {
+        const response = await axios.get('http://127.0.0.1:8000/brands')
+        brands.value = response.data
+    } catch (error) {
+        console.error('获取品牌数据失败:', error)
+    }
+}
+
+// 导航到品牌详情页
+const navigateToBrand = (brandId) => {
+    router.push(`/brands/${brandId}`)
+    drawer.value = false // 导航后关闭drawer
+}
+
+// 组件挂载时获取品牌数据
+onMounted(() => {
+    fetchBrands()
+})
 </script>
 
 <style scoped></style>

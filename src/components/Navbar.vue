@@ -11,6 +11,11 @@
             <v-btn icon @click="goHome">
                 <v-icon>mdi-home</v-icon>
             </v-btn>
+            <!-- 添加用户名显示 -->
+            <v-chip v-if="isLoggedIn" class="ma-2" >
+                <v-icon start>mdi-account</v-icon>
+                <div>{{ userStore.user.username }}</div>
+            </v-chip>
             <v-btn @click="handleAuthClick">
                 <v-icon v-if="!isLoggedIn">mdi-login</v-icon>
                 <v-icon v-else>mdi-logout</v-icon>
@@ -19,7 +24,13 @@
             </v-btn>
         </template>
     </v-app-bar>
-
+    <!-- 添加snackbar组件 -->
+    <v-snackbar v-model="snackbar.show" :timeout="3000" :color="snackbar.color">
+        {{ snackbar.message }}
+        <template v-slot:actions>
+            <v-btn variant="text" @click="snackbar.show = false">关闭</v-btn>
+        </template>
+    </v-snackbar>
     <v-navigation-drawer v-model="drawer" color="drawer">
         <v-list>
             <v-list-item to="/" link class="d-flex justify-start align-center">
@@ -64,22 +75,39 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted,computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { useUserStore } from '@/stores/userStore'
 
 const router = useRouter()
 const drawer = ref(false)
-const isLoggedIn = ref(false)
+const userStore = useUserStore();
+const isLoggedIn = computed(() => userStore.isLoggedIn());
+// console.log("是否登录"+ isLoggedIn.value);
+// console.log("用户信息"+ userStore.user.username);
 const brands = ref([])
+// 添加snackbar状态
+const snackbar = ref({
+    show: false,
+    message: '',
+    color: 'success'
+})
 // 添加返回主页方法
 const goHome = () => {
-  router.push('/')
+    router.push('/')
 }
 const handleAuthClick = () => {
     if (isLoggedIn.value) {
         // 登出逻辑
-        isLoggedIn.value = false
+        userStore.logout()
+        // 显示登出成功提示
+        snackbar.value = {
+            show: true,
+            message: '登出成功',
+            color: 'success'
+        }
+        router.push('/')
     } else {
         // 跳转到登录页面
         router.push('/login')

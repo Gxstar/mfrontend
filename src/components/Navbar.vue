@@ -12,10 +12,15 @@
                 <v-icon>mdi-home</v-icon>
             </v-btn>
             <!-- 添加用户名显示 -->
-            <v-chip v-if="isLoggedIn" class="ma-2" >
+            <v-chip v-if="isLoggedIn" class="ma-2">
                 <v-icon start>mdi-account</v-icon>
                 <div>{{ userStore.user.username }}</div>
             </v-chip>
+            <!-- 管理员入口 -->
+            <v-btn v-if="userStore.isAdmin()" to="/admin" class="ma-2">
+                <v-icon start>mdi-cog</v-icon>
+                管理面板
+            </v-btn>
             <v-btn @click="handleAuthClick">
                 <v-icon v-if="!isLoggedIn">mdi-login</v-icon>
                 <v-icon v-else>mdi-logout</v-icon>
@@ -75,7 +80,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted,computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { useUserStore } from '@/stores/userStore'

@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref,onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import RegisterDialog from '@/components/RegisterDialog.vue'
@@ -49,7 +49,12 @@ const snackbar = ref({
   message: '',
   color: 'success'
 })
-
+// 检查是否已登录
+onMounted(() => {
+  if (userStore.isLoggedIn()) {
+    router.push('/') // 如果已登录，跳转到主页
+  }
+})
 const login = async () => {
   try {
     // 这里替换为实际的登录API调用
@@ -69,7 +74,7 @@ const login = async () => {
     }
 
     const userData = await response.json()
-    const data=userData.user
+    const data = userData.user
     // 使用userStore进行登录
     userStore.login({
       id: data.uuid,
@@ -83,8 +88,10 @@ const login = async () => {
       message: '登录成功',
       color: 'success'
     }
-    // 登录成功后跳转到首页
-    router.push('/')
+    // 延迟跳转
+    setTimeout(() => {
+      router.push('/');
+    }, 1000); // 1秒后跳转
   } catch (error) {
     console.error('登录错误:', error)
     // 这里可以添加错误提示

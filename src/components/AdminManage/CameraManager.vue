@@ -38,7 +38,9 @@
           <v-form>
             <v-row>
               <v-col cols="6">
-                <v-text-field v-model="form.brand" label="品牌" :rules="[required]"></v-text-field>
+                <!-- <v-text-field v-model="form.brand" label="品牌" :rules="[required]"></v-text-field> -->
+                <v-select label="品牌"
+                  :items="brands"></v-select>
               </v-col>
               <v-col cols="6">
                 <v-text-field v-model="form.model" label="型号" :rules="[required]"></v-text-field>
@@ -83,6 +85,7 @@ import axios from 'axios'
 
 // 状态管理
 const cameras = ref([])
+const brands = JSON.parse(localStorage.getItem('brands')).map(item=>item.cname)
 const loading = ref(false)
 const dialog = ref(false)
 const editMode = ref(false)
@@ -139,7 +142,7 @@ const filteredCameras = computed(() => {
     return (
       camera.brand.toLowerCase().includes(searchTerm) ||
       camera.model.toLowerCase().includes(searchTerm) ||
-      camera.series.toLowerCase().includes(searchTerm) 
+      camera.series.toLowerCase().includes(searchTerm)
     )
   })
 })

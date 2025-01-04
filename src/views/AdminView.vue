@@ -32,7 +32,7 @@
   import BrandManager from '@/components/AdminManage/BrandManager.vue'
   import UserManager from '@/components/AdminManage/UserManager.vue'
   import CameraManager from '@/components/AdminManage/CameraManager.vue'
-//   import LensManager from '@/components/AdminManage/LensManager.vue'
+  import LensManager from '@/components/AdminManage/LensManager.vue'
   
   const activeTab = ref('brand')
   </script>

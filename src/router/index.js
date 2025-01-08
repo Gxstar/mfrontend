@@ -4,6 +4,7 @@ import equipmentRoutes from './routes/equipmentRoutes'
 import userRoutes from './routes/userRoutes'
 import { useUserStore } from '@/stores/userStore'
 import axios from 'axios'
+// import axios from '@/axios'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

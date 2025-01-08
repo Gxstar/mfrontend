@@ -39,17 +39,33 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- 成功提示 -->
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="2000">
+      {{ snackbar.message }}
+      <template v-slot:actions>
+        <v-btn color="white" variant="text" @click="snackbar.show = false">
+          关闭
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-card>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import { BRANDS_URL } from '@/api'
 
 const brands = ref([])
 const loading = ref(false)
 const dialog = ref(false)
 const editMode = ref(false)
+// 添加snackbar状态管理
+const snackbar = ref({
+  show: false,
+  message: '',
+  color: ''
+})
 const form = ref({
   brandid: null,
   cname: '',
@@ -85,7 +101,7 @@ const urlRule = (v) => {
 const fetchBrands = async () => {
   try {
     loading.value = true
-    const { data } = await axios.get('http://127.0.0.1:8000/brands')
+    const { data } = await axios.get(BRANDS_URL)
     brands.value = data
   } catch (error) {
     console.error('获取品牌数据失败:', error)
@@ -132,20 +148,25 @@ const saveBrand = async () => {
     if (editMode.value) {
       // 编辑现有品牌
       await axios.put(
-        `http://127.0.0.1:8000/brands/${form.value.brandid}`,
+        `${BRANDS_URL}/${form.value.brandid}`,
         form.value,
         config
       )
     } else {
       // 添加新品牌
       await axios.post(
-        'http://127.0.0.1:8000/brands',
+        BRANDS_URL,
         form.value,
         config
       )
     }
     await fetchBrands() // 重新获取数据
     dialog.value = false
+    snackbar.value = {
+      show: true,
+      message: editMode.value ? '编辑成功' : '添加成功',
+      color: 'success'
+    }
   } catch (error) {
     console.error('保存失败:', error)
     alert('保存失败，请检查权限或稍后重试')
@@ -159,7 +180,7 @@ const deleteBrand = async (item) => {
     try {
       loading.value = true
       await axios.delete(
-        `http://127.0.0.1:8000/brands/${item.brandid}`,
+        `${BRANDS_URL}/${item.brandid}`,
         {
           headers: {
             Authorization: `Bearer ${getAuthToken()}`
@@ -167,6 +188,12 @@ const deleteBrand = async (item) => {
         }
       )
       await fetchBrands() // 重新获取数据
+      // 显示成功提示
+      snackbar.value = {
+        show: true,
+        message: '删除成功',
+        color: 'success'
+      }
     } catch (error) {
       console.error('删除失败:', error)
       alert('删除失败，请检查权限或稍后重试')

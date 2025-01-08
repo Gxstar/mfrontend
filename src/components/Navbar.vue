@@ -82,9 +82,10 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+// import axios from 'axios'
 import { useUserStore } from '@/stores/userStore'
-
+import axios from '@/axios'
+import { BRANDS_URL } from '@/api'
 const router = useRouter()
 const drawer = ref(false)
 const userStore = useUserStore();
@@ -122,7 +123,8 @@ const handleAuthClick = () => {
 // 获取品牌数据
 const fetchBrands = async () => {
     try {
-        const response = await axios.get('http://127.0.0.1:8000/brands')
+        // const response = await axios.get('http://127.0.0.1:8000/brands')
+        const response=await axios.get(BRANDS_URL)
         brands.value = response.data
         localStorage.setItem('brands', JSON.stringify(response.data))
     } catch (error) {

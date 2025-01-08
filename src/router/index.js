@@ -35,13 +35,13 @@ router.beforeEach(async (to, from, next) => {
 
       if (!response.data.valid) {
         userStore.logout()
-        next('/login')
+        next('/')
         return
       }
     } catch (error) {
       console.error('Token验证失败:', error)
       userStore.logout()
-      next('/login')
+      next('/')
       return
     }
   }

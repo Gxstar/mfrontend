@@ -81,7 +81,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
+import axios from '@/axios'
+import { CAMERAS_URL } from '@/api'
 
 // 状态管理
 const cameras = ref([])
@@ -150,7 +151,7 @@ const filteredCameras = computed(() => {
 const fetchCameras = async () => {
   try {
     loading.value = true
-    const { data } = await axios.get('http://127.0.0.1:8000/cameras')
+    const { data } = await axios.get(CAMERAS_URL)
     cameras.value = data
   } catch (error) {
     console.error('获取相机数据失败:', error)

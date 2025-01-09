@@ -4,6 +4,7 @@ import equipmentRoutes from './routes/equipmentRoutes'
 import userRoutes from './routes/userRoutes'
 import { useUserStore } from '@/stores/userStore'
 import axios from 'axios'
+import { USERS_URL } from '@/api'
 // import axios from '@/axios'
 
 const router = createRouter({
@@ -28,7 +29,7 @@ router.beforeEach(async (to, from, next) => {
   // 如果已登录，验证token有效性
   if (userStore.isLoggedIn()) {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/users/verify-token', {
+      const response = await axios.get(`${USERS_URL}/verify-token`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
